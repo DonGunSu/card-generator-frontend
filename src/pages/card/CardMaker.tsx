@@ -33,6 +33,11 @@ const CardMaker = () => {
     setFileImage(URL.createObjectURL(e.target.files[0]));
   }
 
+  // 랜덤 이미지 생성
+  function handleRandomImage() {
+    document.getElementById('previewImage')?.setAttribute('src', "https://source.unsplash.com/random/960x600");
+  }
+
   return (
     <div>
       카드 제작 페이지
@@ -41,6 +46,7 @@ const CardMaker = () => {
       </form>
       <form onSubmit={handleFormSubmit}>
       <input name="picture" accept="image/*" ref={inputRef} onChange={handleUploadImage} type="file"></input>
+      <button onClick={handleRandomImage}>랜덤 이미지 생성</button>
       <br/>
         <input name="to" placeholder="To" type="text" value={to} onChange={handleInputChange} />
         <input name="from" placeholder="From" type="text" value={from} onChange={handleInputChange} />
