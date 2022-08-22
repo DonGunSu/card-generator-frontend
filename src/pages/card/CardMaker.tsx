@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 const CardMaker = () => {
   const [cardForm, setCardForm] = useState({
@@ -8,6 +8,9 @@ const CardMaker = () => {
   });
 
   const { to, from, content } = cardForm;
+
+  const [fileImage, setFileImage] = useState("");
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
@@ -22,10 +25,23 @@ const CardMaker = () => {
     // 카드 생성 로직 구현 필요
   }
 
+  // 이미지 업로드
+  function handleUploadImage(e: React.ChangeEvent<HTMLInputElement>) {
+    if (!e.target.files) {
+      return;
+    }
+    setFileImage(URL.createObjectURL(e.target.files[0]));
+  }
+
   return (
     <div>
       카드 제작 페이지
+      <form>
+        <img id="previewImage" src={fileImage}></img>
+      </form>
       <form onSubmit={handleFormSubmit}>
+      <input name="picture" accept="image/*" ref={inputRef} onChange={handleUploadImage} type="file"></input>
+      <br/>
         <input name="to" placeholder="To" type="text" value={to} onChange={handleInputChange} />
         <input name="from" placeholder="From" type="text" value={from} onChange={handleInputChange} />
         <input name="content" placeholder="Content" type="text" value={content} onChange={handleInputChange} />
