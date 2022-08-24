@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 const CardMaker = () => {
   const [cardForm, setCardForm] = useState({
@@ -35,7 +35,11 @@ const CardMaker = () => {
 
   // 랜덤 이미지 생성
   function handleRandomImage() {
-    document.getElementById('previewImage')?.setAttribute('src', "https://source.unsplash.com/random/960x600");
+    fetch('https://source.unsplash.com/random/960x600')
+    .then((response) => {
+      document.getElementById('previewImage')?.setAttribute('src', response.url);
+    })
+    
   }
 
   return (
