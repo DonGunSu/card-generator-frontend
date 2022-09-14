@@ -1,0 +1,17 @@
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Login from "../pages/auth/Login";
+import CardList from "../pages/card/CardList";
+import CardMake from "../pages/card/CardMake";
+
+const Router = () => {
+  return (
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/card/list" element={<CardList />} />
+      <Route path="/card/make" element={<CardMake />} />
+    </Routes>
+  );
+};
+
+export default Router;
