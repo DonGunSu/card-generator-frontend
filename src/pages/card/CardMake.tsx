@@ -5,7 +5,8 @@ import React, {
   useRef,
   CSSProperties,
 } from "react";
-import { toPng } from "html-to-image";
+import domtoimage from 'dom-to-image';
+import { saveAs } from 'file-saver';
 
 /** 스타일링 테스트 */
 const CardWrapper: CSSProperties = {
@@ -66,24 +67,19 @@ const CardMake = () => {
     console.log("randomColor");
     setCardImage("");
     cardRef.current.style.backgroundColor = '#'+ ('000000' + Math.floor(Math.random()*16777215).toString(16)).slice(-6);
-  }
+  };
 
   /** 생성한 카드 내보내기 */
   const handleExportClick = useCallback(() => {
     if (cardRef.current === null) return;
 
-    toPng(cardRef.current, { cacheBust: true })
-      .then((dataUrl) => {
-        console.log("dataUrl", dataUrl);
-        const link = document.createElement("a");
-        link.download = "test.png";
-        link.href = dataUrl;
-        link.click();
-      })
-      .catch((err) => {
-        console.log("error", err, cardRef);
-      });
-  }, [cardRef]);
+    domtoimage.toPng(cardRef.current)
+    .then(function (dataUrl) {
+        saveAs(dataUrl, 'test.png');
+    })
+    .catch(function (error) {
+        console.error('oops, something went wrong!', error);
+    });}, [cardRef]);
 
   return (
     <div>
