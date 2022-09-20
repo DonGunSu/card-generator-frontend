@@ -5,11 +5,12 @@ import React, {
   useRef,
   CSSProperties,
 } from "react";
-import { toPng } from "html-to-image";
+import domtoimage from 'dom-to-image';
+import { saveAs } from 'file-saver';
 
 /** 스타일링 테스트 */
 const CardWrapper: CSSProperties = {
-  border: "1px red solid",
+  border: "1px black solid",
   width: "800px",
   height: "300px",
   backgroundColor: "#ff32",
@@ -26,6 +27,11 @@ const CardMake = () => {
 
   const { to, from, content } = cardForm;
 
+  useEffect(() => {
+    console.log('hi');
+    cardRef.current.style.backgroundImage = `url('${cardImage}')`;
+  }, [cardImage]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setCardForm({
@@ -39,6 +45,7 @@ const CardMake = () => {
     if (e.target.files === null) return;
     console.log(e.target.files);
     setCardImage(URL.createObjectURL(e.target.files[0]));
+    cardRef.current.style.backgroundSize = "800px 300px";
   };
 
   /** 랜덤 이미지 업로드 */
@@ -49,27 +56,30 @@ const CardMake = () => {
         "https://source.unsplash.com/random/960x600"
       );
       console.log(response);
+      setCardImage(response.url);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  /** 랜덤 색상 변경 */
+  const handleRandomColor = () => {
+    console.log("randomColor");
+    setCardImage("");
+    cardRef.current.style.backgroundColor = '#'+ ('000000' + Math.floor(Math.random()*16777215).toString(16)).slice(-6);
   };
 
   /** 생성한 카드 내보내기 */
   const handleExportClick = useCallback(() => {
     if (cardRef.current === null) return;
 
-    toPng(cardRef.current, { cacheBust: true })
-      .then((dataUrl) => {
-        console.log("dataUrl", dataUrl);
-        const link = document.createElement("a");
-        link.download = "test.png";
-        link.href = dataUrl;
-        link.click();
-      })
-      .catch((err) => {
-        console.log("error", err, cardRef);
-      });
-  }, [cardRef]);
+    domtoimage.toPng(cardRef.current)
+    .then(function (dataUrl) {
+        saveAs(dataUrl, 'test.png');
+    })
+    .catch(function (error) {
+        console.error('oops, something went wrong!', error);
+    });}, [cardRef]);
 
   return (
     <div>
@@ -91,7 +101,7 @@ const CardMake = () => {
           이미지 삽입
           <input accept="image/*" type="file" onChange={handleImageUpload} />
         </button>
-        <button>랜덤 색상</button>
+        <button onClick={handleRandomColor}>랜덤 색상</button>
       </div>
       <div>
         입력
