@@ -5,8 +5,8 @@ import React, {
   useRef,
   CSSProperties,
 } from "react";
-import domtoimage from 'dom-to-image';
-import { saveAs } from 'file-saver';
+import domtoimage from "dom-to-image";
+import { saveAs } from "file-saver";
 
 /** 스타일링 테스트 */
 const CardWrapper: CSSProperties = {
@@ -16,19 +16,30 @@ const CardWrapper: CSSProperties = {
   backgroundColor: "#ff32",
 };
 
+type cardType = {
+  [key: string]: number;
+};
+
+const CARD_TYPE: cardType = {
+  simple: 1,
+  letter: 2,
+};
+
+const initialCardForm = {
+  to: "받는 사람을 입력해 주세요.",
+  from: "보내는 사람을 입력해 주세요.",
+  content: "내용을 입력해 주세요.",
+};
 const CardMake = () => {
-  const [cardForm, setCardForm] = useState({
-    to: "",
-    from: "",
-    content: "",
-  });
+  const [cardForm, setCardForm] = useState(initialCardForm);
   const [cardImage, setCardImage] = useState("");
+  const [cardType, setCardType] = useState(CARD_TYPE.simple);
   const cardRef = useRef<HTMLDivElement>(null); // 추출할 카드 이미지 selector
 
   const { to, from, content } = cardForm;
 
   useEffect(() => {
-    console.log('hi');
+    console.log("hi");
     cardRef.current.style.backgroundImage = `url('${cardImage}')`;
   }, [cardImage]);
 
@@ -66,32 +77,42 @@ const CardMake = () => {
   const handleRandomColor = () => {
     console.log("randomColor");
     setCardImage("");
-    cardRef.current.style.backgroundColor = '#'+ ('000000' + Math.floor(Math.random()*16777215).toString(16)).slice(-6);
+    cardRef.current.style.backgroundColor =
+      "#" +
+      ("000000" + Math.floor(Math.random() * 16777215).toString(16)).slice(-6);
   };
+
+  /** 카드 형식 변경 */
+  const handleChangeCardType = (type: string) => {
+    setCardType(CARD_TYPE[type]);
+  };
+
+  /** 입력한 내용 초기화 */
+  const handleResetCardForm = () => setCardForm(initialCardForm);
 
   /** 생성한 카드 내보내기 */
   const handleExportClick = useCallback(() => {
     if (cardRef.current === null) return;
 
-    domtoimage.toPng(cardRef.current)
-    .then(function (dataUrl) {
-        saveAs(dataUrl, 'test.png');
-    })
-    .catch(function (error) {
-        console.error('oops, something went wrong!', error);
-    });}, [cardRef]);
+    domtoimage
+      .toPng(cardRef.current)
+      .then(function (dataUrl: string) {
+        console.log(typeof dataUrl);
+        saveAs(dataUrl, "test.png");
+      })
+      .catch(function (error: Error) {
+        console.error("oops, something went wrong!", error);
+      });
+  }, [cardRef]);
 
   return (
     <div>
       카드 제작
       <div ref={cardRef} style={CardWrapper}>
         <ul>
-          <li>To.{to}</li>
+          {cardType === 2 && <li>To.{to}</li>}
           <li>{content}</li>
-          <li>From.{from}</li>
-          {/* <li>
-            <img src={cardImage} alt="background" />
-          </li> */}
+          {cardType === 2 && <li>From.{from}</li>}
         </ul>
       </div>
       <div>
@@ -102,6 +123,15 @@ const CardMake = () => {
           <input accept="image/*" type="file" onChange={handleImageUpload} />
         </button>
         <button onClick={handleRandomColor}>랜덤 색상</button>
+      </div>
+      <div>
+        카드 형식
+        <button onClick={() => handleChangeCardType("simple")}>
+          간단 형식
+        </button>
+        <button onClick={() => handleChangeCardType("letter")}>
+          편지 형식
+        </button>
       </div>
       <div>
         입력
@@ -126,6 +156,7 @@ const CardMake = () => {
           value={from}
           onChange={handleInputChange}
         />
+        <button onClick={handleResetCardForm}>초기화</button>
         <button type="submit" onClick={handleExportClick}>
           내보내기
         </button>
