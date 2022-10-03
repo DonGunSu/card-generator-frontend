@@ -12,8 +12,41 @@ const Oauth = () => {
     try {
       const result = await kakaoApi.getToken(KAKAO_CODE);
       console.log(result);
-      if (result.data.access_token) {
-        localStorage.setItem('access_token', result.data.access_token);
+      if (result.status === 200) {
+        const {
+          data: {
+            access_token,
+            expires_in,
+            refresh_token,
+            refresh_token_expires_in,
+          },
+        } = result;
+
+        const refreshToken = {
+          value: access_token,
+          expire: Date.now() + refresh_token_expires_in,
+        };
+
+        const accessToken = {
+          value: access_token,
+          expire: Date.now() + expires_in,
+        };
+
+        window.localStorage.setItem(
+          "access_token",
+          JSON.stringify(accessToken)
+        );
+        window.localStorage.setItem(
+          "refresh_token",
+          JSON.stringify(refreshToken)
+        );
+        console.log(
+          result,
+          access_token,
+          expires_in,
+          refresh_token,
+          refresh_token_expires_in
+        );
       } else {
         console.log('access token is not valid');
       }
