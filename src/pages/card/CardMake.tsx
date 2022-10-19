@@ -7,6 +7,10 @@ import React, {
 } from "react";
 import domtoimage from "dom-to-image";
 import { saveAs } from "file-saver";
+import * as s from "./CardMakeStyled";
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import TextField from '@mui/material/TextField';
 
 /** 스타일링 테스트 */
 const CardWrapper: CSSProperties = {
@@ -106,62 +110,73 @@ const CardMake = () => {
   }, [cardRef]);
 
   return (
-    <div>
-      카드 제작
-      <div ref={cardRef} style={CardWrapper}>
-        <ul>
-          {cardType === 2 && <li>To.{to}</li>}
-          <li>{content}</li>
-          {cardType === 2 && <li>From.{from}</li>}
-        </ul>
-      </div>
-      <div>
-        배경 선택
-        <button onClick={handleRandomImage}>랜덤 이미지</button>
-        <button>
-          이미지 삽입
-          <input accept="image/*" type="file" onChange={handleImageUpload} />
-        </button>
-        <button onClick={handleRandomColor}>랜덤 색상</button>
-      </div>
-      <div>
-        카드 형식
-        <button onClick={() => handleChangeCardType("simple")}>
-          간단 형식
-        </button>
-        <button onClick={() => handleChangeCardType("letter")}>
-          편지 형식
-        </button>
-      </div>
-      <div>
-        입력
-        <input
-          name="to"
-          placeholder="To"
-          type="text"
-          value={to}
-          onChange={handleInputChange}
-        />
-        <input
-          name="content"
-          placeholder="Content"
-          type="text"
-          value={content}
-          onChange={handleInputChange}
-        />
-        <input
-          name="from"
-          placeholder="From"
-          type="text"
-          value={from}
-          onChange={handleInputChange}
-        />
-        <button onClick={handleResetCardForm}>초기화</button>
-        <button type="submit" onClick={handleExportClick}>
-          내보내기
-        </button>
-      </div>
-    </div>
+    <s.CardMakeWrapper>
+      <s.CardMakeList>
+        <div ref={cardRef} style={CardWrapper}>
+          <ul>
+            {cardType === 2 && <li>To.{to}</li>}
+            <li>{content}</li>
+            {cardType === 2 && <li>From.{from}</li>}
+          </ul>
+        </div>
+        <s.ChoiceBox>
+          <Divider/>
+          <s.ChoiceBar>
+            배경 선택
+            <Button variant="outlined" onClick={handleRandomImage}>랜덤 이미지</Button>
+            <Button variant="outlined">
+              이미지 삽입
+              <input accept="image/*" type="file" onChange={handleImageUpload} />
+            </Button>
+            <Button variant="outlined" onClick={handleRandomColor}>랜덤 색상</Button>
+          </s.ChoiceBar>
+          <Divider/>
+          <s.ChoiceBar>
+            카드 형식
+            <Button variant="outlined" onClick={() => handleChangeCardType("simple")}>
+              간단 형식
+            </Button>
+            <Button variant="outlined" onClick={() => handleChangeCardType("letter")}>
+              편지 형식
+            </Button>
+          </s.ChoiceBar>
+          <Divider/>
+          <s.ChoiceBar>
+            내용 입력
+            <TextField 
+              variant="outlined" 
+              value = {to} 
+              onChange={handleInputChange} 
+              name="to"
+              size = "small"
+            />
+            <TextField 
+              variant="outlined" 
+              value = {content} 
+              onChange={handleInputChange} 
+              name="content"
+              size = "small"
+            />
+            <TextField 
+              variant="outlined" 
+              value = {from} 
+              onChange={handleInputChange} 
+              name="from"
+              size = "small"
+            />
+          </s.ChoiceBar>
+          <Divider/>
+          <s.ExportBox>
+            <s.ChoiceBar>
+              <Button variant="outlined" onClick={handleResetCardForm}>초기화</Button>
+              <Button variant="outlined" type="submit" onClick={handleExportClick}>
+                내보내기
+              </Button>
+            </s.ChoiceBar>
+          </s.ExportBox>
+        </s.ChoiceBox>
+      </s.CardMakeList>
+    </s.CardMakeWrapper>
   );
 };
 
